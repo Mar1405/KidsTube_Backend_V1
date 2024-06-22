@@ -1,14 +1,14 @@
 const mongoose = require('mongoose');
 
 
-const courseSchema = new mongoose.Schema({
+const videosSchema = new mongoose.Schema({
   name: { 
     require:true,
     type: String 
   },
-  code: { 
+  url: { 
     require:true,
-    type: Number
+    type: String
    },
   description: { 
     require:true,
@@ -16,4 +16,4 @@ const courseSchema = new mongoose.Schema({
    },
 });
 
-module.exports = mongoose.model('Course', courseSchema);
+module.exports = mongoose.model('videos', videosSchema);
