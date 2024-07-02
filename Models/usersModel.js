@@ -1,62 +1,32 @@
-const mongoose = require("mongoose");
-const validator = require("validator");
+const mongoose = require('mongoose');
 
-const userSchema = new mongoose.Schema({
-  correo: {
-    type: String,
+const usersSchema = new mongoose.Schema({
+  name: {
     required: true,
-    unique: true,
-    validate: {
-      validator: validator.isEmail,
-      message: "Correo electrónico inválido",
-    },
-  },
-  password: {
     type: String,
-    required: true,
-  },
-  repetirPassword: {
-    type: String,
-    required: true,
-    validate: {
-      validator: function(value) {
-        return value === this.password;
-      },
-      message: "Las contraseñas no coinciden",
-    },
-  },
-  telefono: {
-    type: String,
-    required: true,
   },
   pin: {
-    type: String,
     required: true,
-    minlength: 6,
-    maxlength: 6,
-  },
-  nombre: {
     type: String,
+    minLength: 6,
+    maxLength: 6,
+  },
+  country: {
     required: true,
-  },
-  apellidos: {
     type: String,
+  },
+  birthDate: {
     required: true,
-  },
-  pais: {
-    type: String,
-    required: false,
-  },
-  fechaNacimiento: {
     type: Date,
+  },
+  email: {
     required: true,
-    validate: {
-      validator: function(value) {
-        return validator.isDate(value.toString());
-      },
-      message: "Fecha de nacimiento inválida",
-    },
+    type: String,
+  },
+  password: {
+    required: true,
+    type: String,
   },
 });
 
-module.exports = mongoose.model("User", userSchema);
+module.exports = mongoose.model('Users', usersSchema);
