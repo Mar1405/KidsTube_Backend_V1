@@ -37,7 +37,7 @@ const usersGet = async (req, res) => {
  * Crear un nuevo usuario
  */
 const usersPost = async (req, res) => {
-  const { name, pin, country, birthDate, email, password } = req.body;
+  const { name, last_name, pin, country, birthDate, email, password, password2, number_phone } = req.body;
   const today = new Date();
   const userBirthDate = new Date(birthDate);
   const age = today.getFullYear() - userBirthDate.getFullYear();
@@ -47,14 +47,42 @@ const usersPost = async (req, res) => {
     return res.status(400).json({ error: 'User must be at least 18 years old' });
   }
 
+  // Validar que las contraseñas coincidan
+  if (password2 !== password) {
+    return res.status(400).json({ error: 'Passwords do not match' });
+  }
+
+  // Validar que el número de teléfono solo contenga dígitos
+  if (!/^\d+$/.test(number_phone)) {
+    return res.status(400).json({ error: 'Phone number must contain only digits' });
+  }
+
+  // Validar que el nombre solo contenga letras
+  if (!/^[A-Za-z\s]+$/.test(name && last_name)) {
+    return res.status(400).json({ error: 'Name must contain only letters' });
+  }
+
+  // Validar que el país solo contenga letras
+  if (!/^[A-Za-z\s]+$/.test(country)) {
+    return res.status(400).json({ error: 'Country must contain only letters' });
+  }
+
+  // Validar el formato de la fecha de nacimiento (yyyy-mm-dd)
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(birthDate)) {
+    return res.status(400).json({ error: 'Birth date must be in the format yyyy-mm-dd' });
+  }
+
   try {
     const newUser = new Users({
       name,
+      last_name,
       pin,
       country,
       birthDate,
       email,
       password,
+      password2,
+      number_phone,
     });
 
     const savedUser = await newUser.save();
@@ -64,6 +92,7 @@ const usersPost = async (req, res) => {
     return res.status(400).json({ error: error.message });
   }
 };
+
 
 /**
  * Actualizar un usuario por su ID

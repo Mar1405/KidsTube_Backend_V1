@@ -5,6 +5,10 @@ const usersSchema = new mongoose.Schema({
     required: true,
     type: String,
   },
+  last_name: {
+    required: true,
+    type: String,
+  },
   pin: {
     required: true,
     type: String,
@@ -26,6 +30,16 @@ const usersSchema = new mongoose.Schema({
   password: {
     required: true,
     type: String,
+  },
+  password2: {
+    required: true,
+    type: String,
+  },
+  number_phone: {
+    required: true,
+    type: String,
+    minLength: 8,
+    maxLength: 8,
   },
 });
 
