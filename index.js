@@ -4,8 +4,8 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const bodyParser = require("body-parser");
-
-const db = mongoose.connect("mongodb://0.0.0.0:27017/tubekids"); 
+const mongoString = process.env.DATABASE_URL////KAREN CONECTA BD
+const db = mongoose.connect(mongoString); ////KAREN CONECTA BD
 
 const database = mongoose.connection;
 
