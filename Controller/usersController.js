@@ -37,15 +37,15 @@ const usersGet = async (req, res) => {
  * Crear un nuevo usuario
  */
 const usersPost = async (req, res) => {
-  const { name, last_name, pin, country, birthDate, email, password, password2, number_phone } = req.body;
-  const today = new Date();
-  const userBirthDate = new Date(birthDate);
-  const age = today.getFullYear() - userBirthDate.getFullYear();
+  const { name, last_name, pin, country, birthDate, email,number_phone,password, password2 } = req.body;
+  //const today = new Date();
+  //const userBirthDate = new Date(birthDate);
+  //const age = today.getFullYear() - userBirthDate.getFullYear();
 
   // Validar la edad mínima de 18 años
-  if (age < 18) {
-    return res.status(400).json({ error: 'User must be at least 18 years old' });
-  }
+  //if (age < 18) {
+    //return res.status(400).json({ error: 'User must be at least 18 years old' });
+  //}
 
   // Validar que las contraseñas coincidan
   if (password2 !== password) {
@@ -68,9 +68,9 @@ const usersPost = async (req, res) => {
   }
 
   // Validar el formato de la fecha de nacimiento (yyyy-mm-dd)
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(birthDate)) {
-    return res.status(400).json({ error: 'Birth date must be in the format yyyy-mm-dd' });
-  }
+  //if (!/^\d{4}-\d{2}-\d{2}$/.test(birthDate)) {
+    //return res.status(400).json({ error: 'Birth date must be in the format yyyy-mm-dd' });
+  //}
 
   try {
     const newUser = new Users({
@@ -80,9 +80,9 @@ const usersPost = async (req, res) => {
       country,
       birthDate,
       email,
+      number_phone,
       password,
       password2,
-      number_phone,
     });
 
     const savedUser = await newUser.save();
