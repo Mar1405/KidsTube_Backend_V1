@@ -1,4 +1,4 @@
-const Users = require('../models/usersModel');
+const Users = require('../Models/usersModel');
 
 /**
  * Obtener todos los usuarios o un usuario por ID/email
