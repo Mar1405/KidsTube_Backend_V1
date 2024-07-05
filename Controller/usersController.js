@@ -1,4 +1,4 @@
-const Users = require('../Models/usersModel');
+const Users = require('../models/usersModel');
 
 /**
  * Obtener todos los usuarios o un usuario por ID/email
@@ -6,14 +6,12 @@ const Users = require('../Models/usersModel');
 const usersGet = async (req, res) => {
   try {
     if (req.query.id) {
-      // Obtener usuario por ID
       const user = await Users.findById(req.query.id);
       if (!user) {
         return res.status(404).json({ error: 'User not found' });
       }
       return res.json(user);
     } else if (req.query.email && req.query.password) {
-      // Obtener usuario por email y contraseña
       const user = await Users.findOne({
         email: req.query.email,
         password: req.query.password,
@@ -23,7 +21,6 @@ const usersGet = async (req, res) => {
       }
       return res.json(user);
     } else {
-      // Obtener todos los usuarios
       const users = await Users.find();
       return res.json(users);
     }
@@ -34,43 +31,41 @@ const usersGet = async (req, res) => {
 };
 
 /**
+ * Validar los datos de un usuario
+ */
+const validateUserData = (data) => {
+  const { name, last_name, pin, country, birthDate, email, number_phone, password, password2 } = data;
+  const errors = [];
+
+  if (password !== password2) {
+    errors.push('Passwords do not match');
+  }
+
+  if (!/^\d+$/.test(number_phone)) {
+    errors.push('Phone number must contain only digits');
+  }
+
+  if (!/^[A-Za-z\s]+$/.test(name) || !/^[A-Za-z\s]+$/.test(last_name)) {
+    errors.push('Name must contain only letters');
+  }
+
+  if (!/^[A-Za-z\s]+$/.test(country)) {
+    errors.push('Country must contain only letters');
+  }
+
+  return errors;
+};
+
+/**
  * Crear un nuevo usuario
  */
 const usersPost = async (req, res) => {
-  const { name, last_name, pin, country, birthDate, email,number_phone,password, password2 } = req.body;
-  //const today = new Date();
-  //const userBirthDate = new Date(birthDate);
-  //const age = today.getFullYear() - userBirthDate.getFullYear();
+  const { name, last_name, pin, country, birthDate, email, number_phone, password, password2 } = req.body;
 
-  // Validar la edad mínima de 18 años
-  //if (age < 18) {
-    //return res.status(400).json({ error: 'User must be at least 18 years old' });
-  //}
-
-  // Validar que las contraseñas coincidan
-  if (password2 !== password) {
-    return res.status(400).json({ error: 'Passwords do not match' });
+  const errors = validateUserData(req.body);
+  if (errors.length > 0) {
+    return res.status(400).json({ errors });
   }
-
-  // Validar que el número de teléfono solo contenga dígitos
-  if (!/^\d+$/.test(number_phone)) {
-    return res.status(400).json({ error: 'Phone number must contain only digits' });
-  }
-
-  // Validar que el nombre solo contenga letras
-  if (!/^[A-Za-z\s]+$/.test(name && last_name)) {
-    return res.status(400).json({ error: 'Name must contain only letters' });
-  }
-
-  // Validar que el país solo contenga letras
-  if (!/^[A-Za-z\s]+$/.test(country)) {
-    return res.status(400).json({ error: 'Country must contain only letters' });
-  }
-
-  // Validar el formato de la fecha de nacimiento (yyyy-mm-dd)
-  //if (!/^\d{4}-\d{2}-\d{2}$/.test(birthDate)) {
-    //return res.status(400).json({ error: 'Birth date must be in the format yyyy-mm-dd' });
-  //}
 
   try {
     const newUser = new Users({
@@ -82,7 +77,6 @@ const usersPost = async (req, res) => {
       email,
       number_phone,
       password,
-      password2,
     });
 
     const savedUser = await newUser.save();
@@ -93,12 +87,11 @@ const usersPost = async (req, res) => {
   }
 };
 
-
 /**
  * Actualizar un usuario por su ID
  */
 const usersPut = async (req, res) => {
-  const { name, pin, country, birthDate, email, password } = req.body;
+  const { name, last_name, pin, country, birthDate, email, number_phone, password } = req.body;
   try {
     const userId = req.query.id;
     if (!userId) {
@@ -111,10 +104,12 @@ const usersPut = async (req, res) => {
     }
 
     user.name = name || user.name;
+    user.last_name = last_name || user.last_name;
     user.pin = pin || user.pin;
     user.country = country || user.country;
     user.birthDate = birthDate || user.birthDate;
     user.email = email || user.email;
+    user.number_phone = number_phone || user.number_phone;
     user.password = password || user.password;
 
     await user.save();

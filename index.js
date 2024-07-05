@@ -4,10 +4,12 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const bodyParser = require("body-parser");
-const mongoString = process.env.DATABASE_URL////KAREN CONECTA BD
-const db = mongoose.connect(mongoString); ////KAREN CONECTA BD
+//const mongoString = process.env.DATABASE_URL////KAREN CONECTA BD
+//const db = mongoose.connect(mongoString); ////KAREN CONECTA BD
 
 const database = mongoose.connection;
+
+const db = mongoose.connect("mongodb://0.0.0.0:27017/tubekids"); 
 
 database.on("error", (error) => {
   console.error("Error en la conexión a la base de datos:", error);
@@ -36,7 +38,7 @@ const {
   videoPost,
   videoGet,
   videoDelete,
-  videoUpdate
+  videoUpdate,
 } = require("./Controller/videosController");
 
 // Rutas para los endpoints de videos
@@ -45,11 +47,12 @@ app.post("/api/videos", videoPost); // Crear un nuevo video
 app.put("/api/videos/:id", videoUpdate); // Actualizar un video por su ID
 app.delete("/api/videos/:id", videoDelete); // Eliminar un video por su ID
 
+// Rutas para los endpoints de usuarios
 app.get("/api/users", usersGet);
 app.post("/api/users", usersPost);
 app.put("/api/users", usersPut);
 app.delete("/api/users", usersDelete);
 
 app.listen(3001, () => {
-    console.log(`Server Started at ${3001}`);
+  console.log(`Server Started at ${3001}`);
 });

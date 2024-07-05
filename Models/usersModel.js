@@ -27,16 +27,11 @@ const usersSchema = new mongoose.Schema({
     required: true,
     type: String,
   },
-    number_phone: {
+  number_phone: {
     required: true,
     type: String,
-
   },
   password: {
-    required: true,
-    type: String,
-  },
-  password2: {
     required: true,
     type: String,
   },
