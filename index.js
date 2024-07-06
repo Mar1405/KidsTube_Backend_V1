@@ -41,6 +41,11 @@ const {
   videoUpdate,
 } = require("./Controller/videosController");
 
+//login controllers
+const {
+  loginPost,
+} = require("./Controller/loginController");
+
 // Rutas para los endpoints de videos
 app.get("/api/videos", videoGet); // Obtener todos los videos
 app.post("/api/videos", videoPost); // Crear un nuevo video
@@ -52,6 +57,8 @@ app.get("/api/users", usersGet);
 app.post("/api/users", usersPost);
 app.put("/api/users", usersPut);
 app.delete("/api/users", usersDelete);
+
+app.post("/api/users",loginPost);
 
 app.listen(3001, () => {
   console.log(`Server Started at ${3001}`);
