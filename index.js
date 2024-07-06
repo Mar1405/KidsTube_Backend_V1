@@ -4,12 +4,12 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const bodyParser = require("body-parser");
-//const mongoString = process.env.DATABASE_URL////KAREN CONECTA BD
-//const db = mongoose.connect(mongoString); ////KAREN CONECTA BD
+const mongoString = process.env.DATABASE_URL////KAREN CONECTA BD
+const db = mongoose.connect(mongoString); ////KAREN CONECTA BD
 
 const database = mongoose.connection;
 
-const db = mongoose.connect("mongodb://0.0.0.0:27017/tubekids"); 
+//const db = mongoose.connect("mongodb://0.0.0.0:27017/tubekids"); 
 
 database.on("error", (error) => {
   console.error("Error en la conexión a la base de datos:", error);
@@ -58,7 +58,7 @@ app.post("/api/users", usersPost);
 app.put("/api/users", usersPut);
 app.delete("/api/users", usersDelete);
 
-app.post("/api/users",loginPost);
+app.post("/api/login",loginPost);
 
 app.listen(3001, () => {
   console.log(`Server Started at ${3001}`);
