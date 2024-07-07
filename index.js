@@ -46,6 +46,11 @@ const {
   loginPost,
 } = require("./Controller/loginController");
 
+//Admin controllers
+const {
+  AdminPost,
+} = require("./Controller/administrationController");
+
 // Rutas para los endpoints de videos
 app.get("/api/videos", videoGet); // Obtener todos los videos
 app.post("/api/videos", videoPost); // Crear un nuevo video
@@ -58,7 +63,11 @@ app.post("/api/users", usersPost);
 app.put("/api/users", usersPut);
 app.delete("/api/users", usersDelete);
 
+//Rutas Login
 app.post("/api/login",loginPost);
+
+//Rutas Admin pin
+app.post("/api/pin",AdminPost);
 
 app.listen(3001, () => {
   console.log(`Server Started at ${3001}`);
