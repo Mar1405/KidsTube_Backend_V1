@@ -4,8 +4,8 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const bodyParser = require("body-parser");
-//const mongoString = process.env.DATABASE_URL////KAREN CONECTA BD
-//const db = mongoose.connect(mongoString); ////KAREN CONECTA BD
+const mongoString = process.env.DATABASE_URL////KAREN CONECTA BD
+const db = mongoose.connect(mongoString); ////KAREN CONECTA BD
 
 const database = mongoose.connection;
 
@@ -51,6 +51,14 @@ const {
   AdminPost,
 } = require("./Controller/administrationController");
 
+//userkidsControllers
+const {
+  UserKidsGet,
+  UserKidsPost,
+  UserKidsUpdate,
+  UserKidsDelete,
+} = require("./Controller/usersKidsController");
+
 // Rutas para los endpoints de videos
 app.get("/api/videos", videoGet); // Obtener todos los videos
 app.post("/api/videos", videoPost); // Crear un nuevo video
@@ -62,6 +70,12 @@ app.get("/api/users", usersGet);
 app.post("/api/users", usersPost);
 app.put("/api/users", usersPut);
 app.delete("/api/users", usersDelete);
+
+// Rutas para los endpoints de usuarios infantiles
+app.get("/api/usersKids", UserKidsGet);
+app.post("/api/usersKids", UserKidsPost);
+app.put("/api/usersKids/:id", UserKidsUpdate);
+app.delete("/api/usersKids/:id", UserKidsDelete);
 
 //Rutas Login
 app.post("/api/login",loginPost);
