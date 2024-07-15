@@ -2,14 +2,14 @@ const UserKids = require('../Models/usersKidsModels');
 
 // USERKIDS POST
 const UserKidsPost = async (req, res) => {
-    const { name, password } = req.body;
+    const { name, password, genero } = req.body;
     try {
-        const newUser = new UserKids({ name,password });
+        const newUser = new UserKids({ name,password,genero });
         const saveduser = await newUser.save();
-        res.status(201).json({ users: saveduser, location: `/api/usersKids/${saveduser._id}` });
+        return res.status(201).json({ users: saveduser, location: `/api/usersKids/${saveduser._id}` }); 
+
     } catch (error) {
-        console.error('Error al guardar el usuario:', error);
-        res.status(500).json({ error: 'Hubo un error al guardar el usuario infantil. Por favor, intenta de nuevo más tarde.' });
+        res.status(500).json({ error: 'Error al guardar el usuario.' });
     }
 };
 
@@ -42,7 +42,7 @@ const UserKidsDelete = async (req, res) => {
 const UserKidsUpdate = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name,password } = req.body;
+    const { name,password, genero } = req.body;
 
     const user = await UserKids.findById(id);
     if (!user) {
@@ -55,6 +55,9 @@ const UserKidsUpdate = async (req, res) => {
 
     if (password) {
       user.password = password;
+    }
+    if (genero) {
+      user.genero = genero;
     }
 
     await user.save();
