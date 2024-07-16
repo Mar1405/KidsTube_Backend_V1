@@ -65,12 +65,10 @@ const {
 } = require("./Controller/usersKidsController");
 
 const {
-  getPlaylists,
   createPlaylist,
   updatePlaylist,
   deletePlaylist,
-  addVideo,
-  deleteVideo
+  getPlaylists
 } = require("./Controller/playlistController");
 
 // Rutas para los endpoints de videos
@@ -96,8 +94,6 @@ app.get('/api/playlists', getPlaylists);
 app.post('/api/playlists', createPlaylist);
 app.put('/api/playlists/:id', updatePlaylist);
 app.delete('/api/playlists/:id', deletePlaylist);
-app.post('/api/playlists/:id/videos', addVideo);
-app.delete('/api/playlists/:playlistId/videos/:videoId', deleteVideo);
 
 //Rutas Login
 app.post("/api/login",loginPost);
