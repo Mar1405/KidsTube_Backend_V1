@@ -9,7 +9,7 @@ const db = mongoose.connect(mongoString); ////KAREN CONECTA BD
 
 const database = mongoose.connection;
 
-const db = mongoose.connect("mongodb://0.0.0.0:27017/tubekids"); 
+//const db = mongoose.connect("mongodb://0.0.0.0:27017/tubekids"); 
 
 database.on("error", (error) => {
   console.error("Error en la conexión a la base de datos:", error);
@@ -51,6 +51,11 @@ const {
   AdminPost,
 } = require("./Controller/administrationController");
 
+//AvatarKids controllers
+const {
+  AvatarPost,
+} = require("./Controller/avatarUserkidsController.js");
+
 //userkidsControllers
 const {
   UserKidsGet,
@@ -82,6 +87,9 @@ app.post("/api/login",loginPost);
 
 //Rutas Admin pin
 app.post("/api/pin",AdminPost);
+
+//Rutas avatarKids
+app.post("/api/password",AvatarPost)
 
 app.listen(3001, () => {
   console.log(`Server Started at ${3001}`);
