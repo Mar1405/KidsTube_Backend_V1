@@ -54,12 +54,11 @@ const deletePlaylist = async (req, res) => {
     if (!playlist) {
       return res.status(404).json({ message: 'Playlist no encontrada' });
     }
-    res.json({ message: 'Playlist eliminada correctamente' });
+    res.status(204).send(); 
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
-
 // Obtener todas las playlists
 const getPlaylists = async (req, res) => {
   try {

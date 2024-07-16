@@ -6,7 +6,7 @@ const UserKidsPost = async (req, res) => {
     try {
         const newUser = new UserKids({ name,password,genero });
         const saveduser = await newUser.save();
-        return res.status(201).json({ users: saveduser, location: `/api/usersKids/${saveduser._id}` }); 
+        return res.status(204).send();
 
     } catch (error) {
         res.status(500).json({ error: 'Error al guardar el usuario.' });
@@ -42,7 +42,7 @@ const UserKidsDelete = async (req, res) => {
 const UserKidsUpdate = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name,password, genero } = req.body;
+    const { name, password, genero } = req.body;
 
     const user = await UserKids.findById(id);
     if (!user) {
@@ -60,9 +60,9 @@ const UserKidsUpdate = async (req, res) => {
       user.genero = genero;
     }
 
-    await user.save();
+    const updatedUser = await user.save();
 
-    return res.status(200).json({ message: 'Usuario infantil actualizado correctamente' });
+    return res.status(200).json({user: updatedUser });
   } catch (error) {
     console.error('Error al actualizar el usuario:', error);
     return res.status(500).json({ error: 'Hubo un error al actualizar el usuario infantil. Por favor, intenta de nuevo más tarde.' });

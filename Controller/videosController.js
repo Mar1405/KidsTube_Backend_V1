@@ -37,13 +37,14 @@ const videoDelete = async (req, res) => {
     if (!deletedVideo) {
       return res.status(404).json({ error: 'El video que intentas eliminar no existe.' });
     } else {
-      res.json({ message: 'El video ha sido eliminado correctamente' });
+      res.status(204).send(); 
     }
   } catch (error) {
     console.error('Error al eliminar el video:', error);
     res.status(500).json({ error: 'Hubo un error al eliminar el video. Por favor, intenta de nuevo más tarde.' });
   }
 };
+
 
 const videoUpdate = async (req, res) => {
   const { id } = req.params;
@@ -73,7 +74,11 @@ const videoUpdate = async (req, res) => {
     }
 
     await video.save();
-    return res.status(200).json({ message: 'Video actualizado correctamente' });
+
+    // Obtener el video actualizado
+    const updatedVideo = await Video.findById(id);
+
+    return res.status(200).json(updatedVideo); // Devolver el video actualizado en formato JSON
   } catch (error) {
     console.error('Error al actualizar el video:', error);
     return res.status(500).json({ error: 'Hubo un error al actualizar el video. Por favor, intenta de nuevo más tarde.' });
