@@ -2,15 +2,22 @@ const Video = require('../Models/videosModel');
 
 // Controladores
 const videoPost = async (req, res) => {
-    const { nombre, url, descripcion } = req.body;
-    try {
-        const newVideo = new Video({ nombre, url, descripcion });
-        const savedVideo = await newVideo.save();
-        res.status(201).json({ video: savedVideo, location: `/api/videos/${savedVideo._id}` });
-    } catch (error) {
-        console.error('Error al guardar el video:', error);
-        res.status(500).json({ error: 'Hubo un error al guardar el video. Por favor, intenta de nuevo más tarde.' });
+  const { nombre, url, descripcion } = req.body;
+
+  try {
+    // Verificar si el nombre del video ya existe
+    const existingVideo = await Video.findOne({ nombre: nombre.toLowerCase() });
+    if (existingVideo) {
+      return res.status(400).json({ message: 'El nombre del video ya existe' });
     }
+
+    const newVideo = new Video({ nombre: nombre.toLowerCase(), url, descripcion });
+    await newVideo.save();
+    res.status(201).json(newVideo);
+  } catch (error) {
+    console.error('Error al crear el video:', error);
+    res.status(500).json({ error: 'Hubo un error al crear el video. Por favor, intenta de nuevo más tarde.' });
+  }
 };
 
 const videoGet = async (req, res) => {
@@ -28,7 +35,7 @@ const videoDelete = async (req, res) => {
   try {
     const deletedVideo = await Video.findByIdAndDelete(id);
     if (!deletedVideo) {
-      res.status(404).json({ error: 'El video que intentas eliminar no existe.' });
+      return res.status(404).json({ error: 'El video que intentas eliminar no existe.' });
     } else {
       res.json({ message: 'El video ha sido eliminado correctamente' });
     }
@@ -39,21 +46,26 @@ const videoDelete = async (req, res) => {
 };
 
 const videoUpdate = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { url, nombre, descripcion } = req.body;
+  const { id } = req.params;
+  const { url, nombre, descripcion } = req.body;
 
+  try {
     const video = await Video.findById(id);
     if (!video) {
       return res.status(404).json({ error: 'El video que intentas actualizar no existe.' });
     }
 
-    if (url !== undefined && url.trim() !== '') {
-      video.url = url.trim();
+    // Verificar si el nuevo nombre ya existe para otro video
+    if (nombre) {
+      const existingVideo = await Video.findOne({ nombre: nombre.toLowerCase(), _id: { $ne: id } });
+      if (existingVideo) {
+        return res.status(400).json({ message: 'El nombre del video ya existe' });
+      }
+      video.nombre = nombre.toLowerCase();
     }
 
-    if (nombre) {
-      video.nombre = nombre;
+    if (url !== undefined && url.trim() !== '') {
+      video.url = url.trim();
     }
 
     if (descripcion) {
@@ -61,7 +73,6 @@ const videoUpdate = async (req, res) => {
     }
 
     await video.save();
-
     return res.status(200).json({ message: 'Video actualizado correctamente' });
   } catch (error) {
     console.error('Error al actualizar el video:', error);

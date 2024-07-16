@@ -12,42 +12,54 @@ const getPlaylists = async (req, res) => {
 
 const createPlaylist = async (req, res) => {
     const { name, users, videos } = req.body;
-  
+
     try {
-      const newPlaylist = new Playlist({ name, users, videos });
-      await newPlaylist.save();
-      res.status(201).json(newPlaylist);
+        // Verificar si ya existe una playlist con el mismo nombre
+        const existingPlaylist = await Playlist.findOne({ name });
+        if (existingPlaylist) {
+            return res.status(400).json({ message: 'El nombre de la playlist ya existe' });
+        }
+
+        const newPlaylist = new Playlist({ name, users, videos });
+        await newPlaylist.save();
+        res.status(201).json(newPlaylist);
     } catch (error) {
-      console.error('Error al crear la playlist:', error);
-      res.status(400).json({ message: 'Error al crear la playlist' });
+        console.error('Error al crear la playlist:', error);
+        res.status(400).json({ message: 'Error al crear la playlist' });
     }
-  };
-  
-  // Controlador para actualizar una playlist existente
+};
+
+// Controlador para actualizar una playlist existente
 const updatePlaylist = async (req, res) => {
-const { id } = req.params;
-const { name, users, videos } = req.body;
+    const { id } = req.params;
+    const { name, users, videos } = req.body;
 
-try {
-    let playlist = await Playlist.findById(id);
-    if (!playlist) {
-    return res.status(404).json({ message: 'Playlist no encontrada' });
+    try {
+        let playlist = await Playlist.findById(id);
+        if (!playlist) {
+            return res.status(404).json({ message: 'Playlist no encontrada' });
+        }
+
+        // Verificar si ya existe otra playlist con el mismo nombre
+        const existingPlaylist = await Playlist.findOne({ name });
+        if (existingPlaylist && existingPlaylist._id.toString() !== id) {
+            return res.status(400).json({ message: 'El nombre de la playlist ya existe' });
+        }
+
+        // Actualizar los campos de la playlist
+        playlist.name = name;
+        playlist.users = users;
+        playlist.videos = videos;
+
+        // Guardar la playlist actualizada
+        await playlist.save();
+        res.json(playlist);
+    } catch (error) {
+        console.error('Error al actualizar la playlist:', error);
+        res.status(400).json({ message: 'Error al actualizar la playlist' });
     }
+};
 
-    // Actualizar los campos de la playlist
-    playlist.name = name;
-    playlist.users = users;
-    playlist.videos = videos;
-
-    // Guardar la playlist actualizada
-    await playlist.save();
-    res.json(playlist);
-} catch (error) {
-    console.error('Error al actualizar la playlist:', error);
-    res.status(400).json({ message: 'Error al actualizar la playlist' });
-}
-  };
-  
 const deletePlaylist = async (req, res) => {
     const { id } = req.params;
     try {
