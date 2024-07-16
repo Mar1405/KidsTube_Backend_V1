@@ -6,7 +6,6 @@ const AdminPost = async (req, res) => {
 
     try {
         const user = await Users.findOne({ userid});
-        console.log(user);
         if (!user) {
             return res.status(404).json({ error: 'Pin incorrecto' });
             

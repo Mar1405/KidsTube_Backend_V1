@@ -21,7 +21,6 @@ const loginPost = async (req, res) => {
    
     } catch (error) {
         console.error('Error al intentar hacer login:', error);
-        console.log("back end");
         return res.status(500).json({ error: 'Hubo un error al intentar hacer login' });
     }
 };

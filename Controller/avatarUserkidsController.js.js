@@ -6,7 +6,6 @@ const AvatarPost = async (req, res) => {
     try {
         // Busca el usuario por el nombre del avatar y la contraseña proporcionada
         const user = await Users.findOne({name: avatarName, password });
-        console.log(user);
         if (!user) {
             return res.status(404).json({ error: 'Nombre de avatar o contraseña incorrectos' });
         }
