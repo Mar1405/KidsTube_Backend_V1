@@ -59,6 +59,12 @@ const usersPost = async (req, res) => {
   }
 
   try {
+    // Verificar si ya existe un usuario en la base de datos
+    const existingUser = await Users.findOne({});
+    if (existingUser) {
+      return res.status(400).json({ error: 'Ya existe un usuario administrador en la base de datos' });
+    }
+
     const newUser = new Users({
       name,
       last_name,
@@ -77,6 +83,7 @@ const usersPost = async (req, res) => {
     return res.status(400).json({ error: error.message });
   }
 };
+
 
 const usersPut = async (req, res) => {
   const { name, last_name, pin, country, birthDate, email, number_phone, password } = req.body;
