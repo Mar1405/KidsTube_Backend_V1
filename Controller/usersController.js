@@ -1,4 +1,16 @@
 const Users = require('../Models/usersModel');
+const crypto = require('crypto');
+const nodemailer = require('nodemailer');
+require('dotenv').config();
+
+// Configura el transporte de correo
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+});
 
 const usersGet = async (req, res) => {
   try {
@@ -71,6 +83,9 @@ const usersPost = async (req, res) => {
       }
     }
 
+    // Crear un token de verificación
+    const verificationToken = crypto.randomBytes(32).toString('hex');
+
     const newUser = new Users({
       name,
       last_name,
@@ -80,26 +95,37 @@ const usersPost = async (req, res) => {
       email,
       number_phone,
       password,
+      status: 'pending',
+      verificationToken,
     });
 
     const savedUser = await newUser.save();
-    return res.status(201).json(savedUser);
+
+    // Enviar correo de verificación
+    const verificationLink = `http://localhost:3001/api/users/verify/${verificationToken}`;
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: 'Verificación de correo electrónico',
+      text: `Por favor, verifique su correo electrónico haciendo clic en el siguiente enlace: ${verificationLink}`,
+    };
+
+    await transporter.sendMail(mailOptions);
+
+    return res.status(201).json({ message: 'Usuario registrado. Verifique su correo electrónico.' });
   } catch (error) {
     if (error.code === 11000) {
-      // Manejo específico para errores de clave duplicada
       if (error.message.includes('email')) {
         return res.status(400).json({ error: 'El correo electrónico ya está registrado.' });
       } else if (error.message.includes('number_phone')) {
         return res.status(400).json({ error: 'El número de teléfono ya está registrado.' });
       }
-      // Manejo genérico si no se puede determinar el campo
       return res.status(400).json({ error: 'Error al registrar usuario: clave duplicada.' });
     }
     console.error('Error al guardar usuario:', error);
     return res.status(400).json({ error: error.message });
   }
 };
-
 
 const usersPut = async (req, res) => {
   const { name, last_name, pin, country, birthDate, email, number_phone, password } = req.body;
@@ -163,9 +189,31 @@ const usersDelete = async (req, res) => {
   }
 };
 
+const verifyUser = async (req, res) => {
+  const { token } = req.params;
+
+  try {
+    const user = await Users.findOne({ verificationToken: token });
+
+    if (!user) {
+      return res.status(400).json({ error: 'Token de verificación inválido.' });
+    }
+
+    user.status = 'active';
+    user.verificationToken = undefined; // Limpiar el token después de la verificación
+    await user.save();
+
+    return res.status(200).json({ message: 'Correo electrónico verificado con éxito.' });
+  } catch (error) {
+    console.error('Error al verificar el usuario:', error);
+    return res.status(500).json({ error: 'Error interno del servidor' });
+  }
+};
+
 module.exports = {
   usersGet,
   usersPost,
   usersPut,
   usersDelete,
+  verifyUser,
 };

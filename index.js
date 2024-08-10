@@ -32,6 +32,7 @@ const {
   usersPost,
   usersPut,
   usersDelete,
+  verifyUser,
 } = require("./Controller/usersController");
 
 const {
@@ -82,6 +83,7 @@ app.get("/api/users", usersGet);
 app.post("/api/users", usersPost);
 app.put("/api/users", usersPut);
 app.delete("/api/users", usersDelete);
+app.get('/api/users/verify/:token', verifyUser);
 
 // Rutas para los endpoints de usuarios infantiles
 app.get("/api/usersKids", UserKidsGet);
