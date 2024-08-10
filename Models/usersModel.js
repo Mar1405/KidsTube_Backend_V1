@@ -4,7 +4,6 @@ const usersSchema = new mongoose.Schema({
   name: {
     required: true,
     type: String,
-    unique: true,
   },
   last_name: {
     required: true,
@@ -30,6 +29,14 @@ const usersSchema = new mongoose.Schema({
   },
   password: {
     required: true,
+    type: String,
+  },
+  status: {
+    type: String,
+    enum: ['pending', 'active'],
+    default: 'pending',
+  },
+  verificationToken: {
     type: String,
   },
 });
