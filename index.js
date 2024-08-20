@@ -1,5 +1,5 @@
 require("dotenv").config();
-
+const sgMail = require("../KidsTube_Backend_V1/Controller/sendEmail.js");
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");

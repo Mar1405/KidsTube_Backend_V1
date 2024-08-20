@@ -1,17 +1,12 @@
 const Users = require('../Models/usersModel');
 const crypto = require('crypto');
-const nodemailer = require('nodemailer');
+const sgMail = require('@sendgrid/mail');
 require('dotenv').config();
+const { sendVerificationEmail } = require('./sendEmail'); 
+// Configurar SendGrid
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-// Configura el transporte de correo
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
-
+// Controlador para obtener usuarios
 const usersGet = async (req, res) => {
   try {
     if (req.query.id) {
@@ -39,6 +34,7 @@ const usersGet = async (req, res) => {
   }
 };
 
+// Función para validar los datos del usuario
 const validateUserData = (data) => {
   const { name, last_name, pin, country, birthDate, email, number_phone, password, password2 } = data;
   const errors = [];
@@ -62,6 +58,7 @@ const validateUserData = (data) => {
   return errors;
 };
 
+// Controlador para crear un nuevo usuario
 const usersPost = async (req, res) => {
   const { name, last_name, pin, country, birthDate, email, number_phone, password, password2 } = req.body;
 
@@ -86,6 +83,7 @@ const usersPost = async (req, res) => {
     // Crear un token de verificación
     const verificationToken = crypto.randomBytes(32).toString('hex');
 
+    // Crear nuevo usuario
     const newUser = new Users({
       name,
       last_name,
@@ -99,34 +97,22 @@ const usersPost = async (req, res) => {
       verificationToken,
     });
 
+    // Guardar el usuario en la base de datos
     const savedUser = await newUser.save();
 
-    // Enviar correo de verificación
+    // Enviar correo de verificación usando SendGrid
     const verificationLink = `http://localhost:3001/api/users/verify/${verificationToken}`;
-    const mailOptions = {
-      from: process.env.EMAIL_USER,
-      to: email,
-      subject: 'Verificación de correo electrónico',
-      text: `Por favor, verifique su correo electrónico haciendo clic en el siguiente enlace: ${verificationLink}`,
-    };
 
-    await transporter.sendMail(mailOptions);
+    await sendVerificationEmail(email, verificationLink); // Llamada a la función de envío de correo
 
     return res.status(201).json({ message: 'Usuario registrado. Verifique su correo electrónico.' });
   } catch (error) {
-    if (error.code === 11000) {
-      if (error.message.includes('email')) {
-        return res.status(400).json({ error: 'El correo electrónico ya está registrado.' });
-      } else if (error.message.includes('number_phone')) {
-        return res.status(400).json({ error: 'El número de teléfono ya está registrado.' });
-      }
-      return res.status(400).json({ error: 'Error al registrar usuario: clave duplicada.' });
-    }
     console.error('Error al guardar usuario:', error);
-    return res.status(400).json({ error: error.message });
+    return res.status(500).json({ error: 'Error interno del servidor' });
   }
 };
 
+// Controlador para actualizar un usuario
 const usersPut = async (req, res) => {
   const { name, last_name, pin, country, birthDate, email, number_phone, password } = req.body;
   try {
@@ -165,10 +151,11 @@ const usersPut = async (req, res) => {
     return res.status(200).json(user);
   } catch (error) {
     console.error('Error:', error);
-    return res.status(error.status || 500).json({ error: error.message || 'Error interno del servidor' });
+    return res.status(500).json({ error: 'Error interno del servidor' });
   }
 };
 
+// Controlador para eliminar un usuario
 const usersDelete = async (req, res) => {
   try {
     const userId = req.query.id;
@@ -185,10 +172,11 @@ const usersDelete = async (req, res) => {
     return res.status(204).json({});
   } catch (error) {
     console.error('Error:', error);
-    return res.status(error.status || 500).json({ error: error.message || 'Error interno del servidor' });
+    return res.status(500).json({ error: 'Error interno del servidor' });
   }
 };
 
+// Controlador para verificar un usuario
 const verifyUser = async (req, res) => {
   const { token } = req.params;
 
