@@ -39,7 +39,7 @@ const usersSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['pending', 'active'],
+    enum: ['pending', 'active', 'verified'],
     default: 'pending',
   },
   verificationToken: {

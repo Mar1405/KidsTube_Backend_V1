@@ -107,7 +107,7 @@ app.post("/api/pin",AdminPost);
 //Rutas avatarKids
 app.post("/api/password",AvatarPost)
 
-app.post('/verify-code', verifyCode);
+app.post('/api/verify-code', verifyCode);
 
 app.listen(3001, () => {
   console.log(`Server Started at ${3001}`);

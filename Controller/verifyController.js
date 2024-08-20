@@ -19,6 +19,7 @@ const verifyCode = async (req, res) => {
         if (user.verificationCode.trim() !== verificationCode.trim()) {
             return res.status(400).json({ error: 'Código de verificación incorrecto' });
         }
+
         // Verificar si el código ha expirado
         console.log('Fecha de expiración del código:', new Date(user.verificationCodeExpiration));
         console.log('Fecha actual:', new Date());
@@ -40,7 +41,7 @@ const verifyCode = async (req, res) => {
         return res.status(200).json({ message: 'Código de verificación exitoso. Tu cuenta ha sido activada.' });
 
     } catch (error) {
-        console.error('Error al verificar el código:', error);
+        console.error('Error al verificar el código:', error.message);
         return res.status(500).json({ error: `Hubo un error al verificar el código: ${error.message}` });
     }
 };
