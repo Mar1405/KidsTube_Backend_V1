@@ -6,6 +6,7 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const mongoString = process.env.DATABASE_URL////KAREN CONECTA BD
 //const db = mongoose.connect(mongoString); ////KAREN CONECTA BD
+const { verifyCode } = require('./Controller/verifyController');
 
 const database = mongoose.connection;
 
@@ -105,6 +106,8 @@ app.post("/api/pin",AdminPost);
 
 //Rutas avatarKids
 app.post("/api/password",AvatarPost)
+
+app.post('/verify-code', verifyCode);
 
 app.listen(3001, () => {
   console.log(`Server Started at ${3001}`);

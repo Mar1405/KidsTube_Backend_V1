@@ -45,6 +45,12 @@ const usersSchema = new mongoose.Schema({
   verificationToken: {
     type: String,
   },
+  verificationCode: {
+    type: String,
+  },
+  verificationCodeExpiration: {
+    type: Date,
+  }
 });
 
 module.exports = mongoose.model('Users', usersSchema);
