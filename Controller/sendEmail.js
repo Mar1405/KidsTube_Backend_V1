@@ -12,8 +12,6 @@ const sendVerificationEmail = async (toEmail, verificationLink) => {
 
     try {
         await sgMail.send(msg);
-        // Solo registrar un mensaje genérico de éxito
-        console.log('Correo de verificación enviado correctamente.');
     } catch (error) {
         // Registrar el error sin detalles del destinatario
         console.error('Error al enviar el correo de verificación:', error.message);

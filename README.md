@@ -1,8 +1,8 @@
-# KidsTube_Backend_V1
+# KidsTube_Backend_VersionFinal
 
 ## Descripción
 
-KidsTube_Backend_V1 es una aplicación web destinada a padres que deseen controlar los contenidos que sus hijos pueden ver en línea. Permite a los padres seleccionar los contenidos específicos a los que sus hijos tienen acceso. Estos contenidos pueden ser videos de YouTube o videos que los padres carguen directamente a la lista de videos.
+KidsTube_Backend_V2 es una aplicación web destinada a padres que deseen controlar los contenidos que sus hijos pueden ver en línea. Permite a los padres seleccionar los contenidos específicos a los que sus hijos tienen acceso. Estos contenidos pueden ser videos de YouTube o videos que los padres carguen directamente a la lista de videos.
 
 La aplicación utiliza Node.js como entorno de ejecución, Express.js como framework web y Mongoose como biblioteca de modelado de objetos para MongoDB, lo que proporciona una base sólida para la construcción de una API RESTful para gestionar los datos de los usuarios y los videos.
 
