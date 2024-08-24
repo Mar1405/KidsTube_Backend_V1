@@ -26,4 +26,3 @@ const sendVerificationEmail = async (toEmail, verificationLink) => {
 };
 
 module.exports = { sendVerificationEmail };
-

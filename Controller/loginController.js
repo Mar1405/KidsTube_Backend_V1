@@ -31,9 +31,6 @@ const loginPost = async (req, res) => {
 
             case 'active':
                 if (verificationCode) {
-                    // Imprimir ambos códigos para depuración (solo en desarrollo)
-                    console.log('Código ingresado:', verificationCode);
-                    console.log('Código guardado:', user.verificationCode);
 
                     // Verificar código de verificación
                     if (user.verificationCode !== verificationCode) {
@@ -45,7 +42,7 @@ const loginPost = async (req, res) => {
                     }
 
                     // Limpiar el código de verificación y su expiración, y cambiar el estado del usuario a 'verified'
-                    user.verificationCode = null;
+                    user.verificationCode = user.verificationCode;
                     user.verificationCodeExpiration = null;
                     user.status = 'verified';
                     await user.save();
