@@ -7,6 +7,7 @@ const bodyParser = require("body-parser");
 const mongoString = process.env.DATABASE_URL////KAREN CONECTA BD
 //const db = mongoose.connect(mongoString); ////KAREN CONECTA BD
 const { verifyCode } = require('./Controller/verifyController');
+const { generateCode } = require('./Controller/generateCodeController');
 
 const database = mongoose.connection;
 
@@ -108,6 +109,8 @@ app.post("/api/pin",AdminPost);
 app.post("/api/password",AvatarPost)
 
 app.post('/api/verify-code', verifyCode);
+
+app.post('/api/generate-code', generateCode);
 
 app.listen(3001, () => {
   console.log(`Server Started at ${3001}`);

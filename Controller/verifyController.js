@@ -17,10 +17,6 @@ const verifyCode = async (req, res) => {
             return res.status(400).json({ error: 'Código de verificación incorrecto' });
         }
 
-        // Verificar si el código ha expirado
-        console.log('Fecha de expiración del código:', new Date(user.verificationCodeExpiration));
-        console.log('Fecha actual:', new Date());
-
         if (Date.now() > user.verificationCodeExpiration) {
             return res.status(400).json({ error: 'El código de verificación ha expirado' });
         }

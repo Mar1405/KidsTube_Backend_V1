@@ -1,13 +1,7 @@
-const crypto = require('crypto');
 const Users = require('../Models/usersModel');
-const { sendSMS } = require('./sendSms');
-
-const generateVerificationCode = () => {
-    return crypto.randomBytes(3).toString('hex').toUpperCase(); // Código alfanumérico de 6 caracteres
-};
 
 const loginPost = async (req, res) => {
-    const { email, password, verificationCode } = req.body;
+    const { email, password } = req.body;
 
     try {
         const user = await Users.findOne({ email: email.toLowerCase() });
@@ -30,37 +24,7 @@ const loginPost = async (req, res) => {
                 return res.status(200).json({ message: 'Login exitoso. Tu cuenta ya está verificada.', userId: user._id });
 
             case 'active':
-                if (verificationCode) {
-
-                    // Verificar código de verificación
-                    if (user.verificationCode !== verificationCode) {
-                        return res.status(400).json({ error: 'Código de verificación incorrecto' });
-                    }
-
-                    if (Date.now() > user.verificationCodeExpiration) {
-                        return res.status(400).json({ error: 'El código de verificación ha expirado' });
-                    }
-
-                    // Limpiar el código de verificación y su expiración, y cambiar el estado del usuario a 'verified'
-                    user.verificationCode = user.verificationCode;
-                    user.verificationCodeExpiration = null;
-                    user.status = 'verified';
-                    await user.save();
-
-                    return res.status(200).json({ message: 'Código de verificación exitoso. Tu cuenta ha sido activada.', userId: user._id });
-                } else {
-                    // Generar y enviar un nuevo código si el usuario está "active" y no ha ingresado uno
-                    const newVerificationCode = generateVerificationCode();
-                    user.verificationCode = newVerificationCode;
-                    user.verificationCodeExpiration = Date.now() + 15 * 60 * 1000; // Expira en 15 minutos
-                    await user.save();
-
-                    const smsMessage = `Tu código de verificación es: ${newVerificationCode}`;
-                    const formattedPhoneNumber = `+${user.number_phone.replace(/\s+/g, '')}`;
-                    await sendSMS(formattedPhoneNumber, smsMessage);
-
-                    return res.status(200).json({ message: 'Se ha enviado un SMS con el código de verificación. Por favor, ingresa el código para completar la verificación.', userId: user._id });
-                }
+                return res.status(200).json({ message: 'Se ha enviado un SMS con el código de verificación. Por favor, ingresa el código para completar la verificación.', userId: user._id });
 
             default:
                 return res.status(400).json({ error: 'Estado del usuario no válido para verificación' });
