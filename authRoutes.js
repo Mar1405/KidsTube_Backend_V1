@@ -2,8 +2,8 @@ const express = require('express');
 const axios = require('axios');
 const router = express.Router();
 
-const CLIENT_ID = '299649270225-l5uco0rc9lnfoib5uu9gjk7dfnns715s.apps.googleusercontent.com';
-const CLIENT_SECRET = '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';
+const CLIENT_ID = process.env.CLIENT_ID;
+const CLIENT_SECRET = process.env.CLIENT_SECRET;
 const REDIRECT_URI = '<http://localhost:5000/auth/google/callback>';
 
 // Initiates the Google Login flow
