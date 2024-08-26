@@ -18,7 +18,7 @@ const loginPost = async (req, res) => {
             return res.status(401).json({ error: 'Contraseña incorrecta' });
         }
 
-        const token = jwt.sign({ email }, SECRET_KEY, { expiresIn: '1h' });
+        const token = jwt.sign({ email }, SECRET_KEY, { expiresIn: '2m' });
         user.jwt = token;
         await user.save();
 

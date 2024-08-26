@@ -1,4 +1,5 @@
 const Users = require('../Models/usersModel');
+const { logout } = require('../Controller/sesionController');
 
 
 const AdminPost = async (req, res) => {
@@ -31,7 +32,8 @@ const AdminPost = async (req, res) => {
             return res.status(401).json({ error: 'Datos erroneos ,verifica tus datos!!!' });
         }
         else {
-            return res.status(403).json({ error: result.error });
+            return logout(req, res);
+            
         }
    
     } catch (error) {

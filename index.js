@@ -10,8 +10,8 @@ const mongoString = process.env.DATABASE_URL////KAREN CONECTA BD
 const { verifyCode } = require('./Controller/verifyController');
 const { generateCode } = require('./Controller/generateCodeController');
 const { authenticateJWT } = require('./Controller/jwtUtils.js');
-const authRoutes = require('./authRoutes');
-
+const { logout } = require('./Controller/sesionController.js');
+const authRoutes = require('./authRoutes.js');
 const database = mongoose.connection;
 
 const db = mongoose.connect("mongodb://0.0.0.0:27017/tubekids"); 
@@ -117,6 +117,13 @@ app.post('/api/verify-code', verifyCode);
 app.post('/api/generate-code', generateCode);
 
 app.get('/api/authenticate-jwt', authenticateJWT);
+
+app.post('/api/sesion-Out', logout);
+
+// Rutas protegidas
+app.get('/protected-route', authenticateJWT, (req, res) => {
+  res.status(200).json({ message: 'Acceso autorizado a la ruta protegida' });
+});
 
 app.listen(3001, () => {
   console.log(`Server Started at ${3001}`);

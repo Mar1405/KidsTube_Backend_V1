@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 const Users = require('../Models/usersModel');
 require('dotenv').config();
 const SECRET_KEY = process.env.JWT_SECRET;
+const { logout } = require('../Controller/sesionController');
 
 const authenticateJWT = (req, res, next) => {
     const authHeader = req.headers.authorization;
@@ -10,13 +11,19 @@ const authenticateJWT = (req, res, next) => {
         if (authHeader) {
             const token = authHeader.split(' ')[1];
 
-            jwt.verify(token, SECRET_KEY, async (err, user) => {
-                if (err) {
-                    return res.status(403).json({ error: 'JWT Inválido.' });
+            jwt.verify(token, SECRET_KEY, async (err, decoded) => {
+            if (err) {
+                if (err.name === 'TokenExpiredError') {
+                    console.log('JWT expirado, cerrando sesión del usuario');
+                    
+                    // Llama al método logout para limpiar el JWT y cerrar la sesión
+                    return logout(req, res);
                 }
 
-                user = await Users.findOne({jwt: token});
+                return res.status(403).json({ error: 'JWT Inválido.' });
+            }
 
+            const user = await Users.findOne({ jwt: token });
                 // Si no encuentra un usuario con este jwt, devuelve error
                 if (!user) {
                     return res.status(404).json({ error: 'No existe este JWT' });

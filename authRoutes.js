@@ -9,7 +9,7 @@ const REDIRECT_URI = 'http://localhost:3001/auth/google/callback';
 
 // Initiates the Google Login flow
 router.get('/auth/google', (req, res) => {
-  const url = 'https://accounts.google.com/o/oauth2/v2/auth?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code&scope=profile email';
+  const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code&scope=profile email`;
   console.log(url)
   res.redirect(url);
 });
