@@ -1,16 +1,38 @@
 const jwt = require('jsonwebtoken');
+const Users = require('../Models/usersModel');
 require('dotenv').config();
+const SECRET_KEY = process.env.JWT_SECRET;
 
-const generateToken = (userId) => {
-    return jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: '1h' });
-};
+const authenticateJWT = (req, res, next) => {
+    const authHeader = req.headers.authorization;
 
-const verifyToken = (token) => {
     try {
-        return jwt.verify(token, process.env.JWT_SECRET);
-    } catch (err) {
-        return null;
+        if (authHeader) {
+            const token = authHeader.split(' ')[1];
+
+            jwt.verify(token, SECRET_KEY, async (err, user) => {
+                if (err) {
+                    return res.status(403).json({ error: 'JWT Inválido.' });
+                }
+
+                user = await Users.findOne({jwt: token});
+
+                // Si no encuentra un usuario con este jwt, devuelve error
+                if (!user) {
+                    return res.status(404).json({ error: 'No existe este JWT' });
+                    
+                }
+                else {
+                    return res.status(200).json({ message: 'JWT existente y correcto.' });
+                }
+            });
+        } else {
+            res.status(401).json({ error: 'JWT no encontrado' });
+        }
+    } catch (error) {
+        console.error('Error al verificar el JWT:', error.message);
+        return res.status(500).json({ error: `Hubo un error al verificar el JWT: ${error.message}` });
     }
 };
 
-module.exports = { generateToken, verifyToken };
+module.exports = { authenticateJWT };

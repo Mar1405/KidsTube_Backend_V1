@@ -50,6 +50,9 @@ const usersSchema = new mongoose.Schema({
   },
   verificationCodeExpiration: {
     type: Date,
+  },
+  jwt: {
+    type: String,
   }
 });
 

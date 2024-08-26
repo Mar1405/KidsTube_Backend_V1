@@ -4,10 +4,13 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const bodyParser = require("body-parser");
+const jwt = require("jsonwebtoken");
 const mongoString = process.env.DATABASE_URL////KAREN CONECTA BD
 //const db = mongoose.connect(mongoString); ////KAREN CONECTA BD
 const { verifyCode } = require('./Controller/verifyController');
 const { generateCode } = require('./Controller/generateCodeController');
+const { authenticateJWT } = require('./Controller/jwtUtils.js');
+const authRoutes = require('./authRoutes');
 
 const database = mongoose.connection;
 
@@ -27,6 +30,7 @@ const app = express();
 app.use(express.json());
 app.use(bodyParser.json());
 app.use(cors()); // Ajusta las opciones de CORS según tus necesidades
+app.use('/', authRoutes);
 
 // Importar y definir los controladores aquí
 const {
@@ -111,6 +115,8 @@ app.post("/api/password",AvatarPost)
 app.post('/api/verify-code', verifyCode);
 
 app.post('/api/generate-code', generateCode);
+
+app.get('/api/authenticate-jwt', authenticateJWT);
 
 app.listen(3001, () => {
   console.log(`Server Started at ${3001}`);

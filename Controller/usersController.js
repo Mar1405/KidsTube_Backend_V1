@@ -1,10 +1,30 @@
 const Users = require('../Models/usersModel');
 const crypto = require('crypto');
 const sgMail = require('@sendgrid/mail');
+const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const { sendVerificationEmail } = require('./sendEmail'); 
 // Configurar SendGrid
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
+/**
+ * Función middleware para verificar el token JWT
+ */
+function verifyToken(req, res, next) {
+  const token = req.headers.authorization?.split(' ')[1];
+
+  if (!token) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  try {
+    const decoded = jwt.verify(token, 'secreto');
+    req.user = decoded;
+    next();
+  } catch (err) {
+    return res.status(403).json({ error: 'Invalid token' });
+  }
+}
 
 // Controlador para obtener usuarios
 const usersGet = async (req, res) => {
